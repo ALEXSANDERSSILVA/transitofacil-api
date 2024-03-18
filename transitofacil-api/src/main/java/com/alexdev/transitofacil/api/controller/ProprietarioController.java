@@ -1,7 +1,10 @@
 package com.alexdev.transitofacil.api.controller;
 
+import com.alexdev.transitofacil.domain.exception.NegocioException;
 import com.alexdev.transitofacil.domain.model.Proprietario;
 import com.alexdev.transitofacil.domain.repository.ProprietarioRepository;
+import com.alexdev.transitofacil.domain.service.RegistroProprietarioService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +18,7 @@ import java.util.List;
 public class ProprietarioController {
 
     private final ProprietarioRepository proprietarioRepository;
+    private final RegistroProprietarioService registroProprietarioService;
 
     @GetMapping
     public List<Proprietario> listar() {
@@ -29,8 +33,8 @@ public class ProprietarioController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Proprietario adicionar(@RequestBody Proprietario proprietario) {
-        return proprietarioRepository.save(proprietario);
+    public Proprietario adicionar(@Valid @RequestBody Proprietario proprietario) {
+        return registroProprietarioService.salvar(proprietario);
     }
 
     @PutMapping("/{proprietarioId}")
@@ -54,5 +58,10 @@ public class ProprietarioController {
 
         proprietarioRepository.deleteById(proprietarioId);
         return ResponseEntity.noContent().build();
+    }
+
+    @ExceptionHandler(NegocioException.class)
+    public ResponseEntity<String> capturar(NegocioException e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
     }
 }
