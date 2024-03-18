@@ -24,4 +24,9 @@ public class RegistroProprietarioService {
 
         return proprietarioRepository.save(proprietario);
     }
+
+    @Transactional
+    public void excluir(Long proprietarioId) {
+        proprietarioRepository.deleteById(proprietarioId);
+    }
 }
